@@ -1,3 +1,5 @@
+var url = require('url');
+
 /* You should implement your request handler function in this file.
  * But you need to pass the function to http.createServer() in
  * basic-server.js.  So you must figure out how to export the function
@@ -11,25 +13,33 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
+var rooms = {};
+
 exports.handleRequest = function(request, response) {
 
   console.log("Serving request type " + request.method + " for url " + request.url);
-  var statusCode = 200;
+  var parsedURL = url.parse(request.url).pathname.split("/");
+  console.log("Parsed URL: ", parsedURL);
+
+  var statusCode;
   var headers = defaultCorsHeaders;
 
   headers['Content-Type'] = "text/plain";
 
-  /* Response is an http.ServerRespone object containing methods for
-   * writing our response to the client. Documentation for both request
-   * and response can be found at
-   * http://nodemanual.org/0.8.14/nodejs_ref_guide/http.html*/
-  response.writeHead(statusCode, headers);
-  /* .writeHead() tells our server what HTTP status code to send back
-   * to the client, and what headers to include on the response. */
-
-  /* Make sure to always call response.end() - Node will not send
-   * anything back to the client until you do. The string you pass to
-   * response.end() will be the body of the response - i.e. what shows
-   * up in the browser.*/
-  response.end("Oh, ya let do it!");
+  if (request.method === 'GET') {
+    if (parsedURL[1] === 'classes') {
+      statusCode = 200;
+      response.writeHead(statusCode, headers);
+      response.end(rooms[parsedURL[2]]);
+    } else {
+      statusCode = 404;
+      response.end("404: didn't find your page breh");
+    }
+  } else if (request.method === 'POST') {
+    if (parsedURL[1] === 'classes') {
+      // do something to write the message to the right room
+      statusCode = 201;
+      response.writeHead(statusCode, headers);
+    }
+  }
 };
