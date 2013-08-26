@@ -13,39 +13,58 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
+var headers = defaultCorsHeaders;
+headers['Content-Type'] = "text/plain";
+var statusCode;
+
 var rooms = {};
 
 exports.handleRequest = function(request, response) {
-
   console.log("Serving request type " + request.method + " for url " + request.url);
   var parsedURL = url.parse(request.url).pathname.split("/");
   console.log("Parsed URL: ", parsedURL);
 
-  var statusCode;
-  var headers = defaultCorsHeaders;
-
-  headers['Content-Type'] = "text/plain";
-
-  // handler for message requests
-  if (request.method === 'GET') {
-    if (parsedURL[1] === 'classes') {
-      statusCode = 200;
-      response.writeHead(statusCode, headers);
-      response.end(rooms.hasOwnProperty(parsedURL[2]) ? rooms[parsedURL[2]] : '[]');
-    } else {
-      // handler for malformed URLs
-      statusCode = 404;
-      response.writeHead(statusCode, headers);
-      response.end("404: didn't find your page breh");
-    }
-  }
-
-  // handler for submitted messages
   if (request.method === 'POST') {
-    if (parsedURL[1] === 'classes') {
-      // do something to write the message to the right room
-      statusCode = 201;
-      response.writeHead(statusCode, headers);
-    }
+    sendMessageHandler(request, response, parsedURL[2]);
+  } else if (request.method === 'GET' && parsedURL[1] === 'classes') {
+    getMessagesHandler(request, response, parsedURL[2]);
+  } else {
+    notFoundHandler(request, response);
   }
+};
+
+var getMessagesHandler = function(request, response, roomName) {
+  statusCode = 200;
+  var messages = [];
+  var currentMessages = rooms[roomName] || [];
+  for (var i = 0; i < currentMessages.length; i++) {
+    messages.push(currentMessages[i]);
+  }
+
+  response.writeHead(statusCode, headers);
+  response.end(JSON.stringify(messages));
+};
+
+var sendMessageHandler = function(request, response, roomName) {
+  var messageData = '';
+  rooms[roomName] = rooms[roomName] || [];
+  request.on('data', function(chunk) {
+    messageData += chunk;
+  });
+  request.on('end', function() {
+    statusCode = 201;
+    var message = {};
+    var parsedMessage = JSON.parse(messageData);
+    message.username = parsedMessage.username;
+    message.message = parsedMessage.message;
+    message.createdTime = Date();
+    rooms[roomName].push(message);
+  });
+  response.writeHead(statusCode, headers);
+  response.end();
+};
+
+var notFoundHandler = function(request, response) {
+  statusCode = 404;
+
 };
