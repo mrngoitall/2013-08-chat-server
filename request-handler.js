@@ -31,7 +31,7 @@ exports.handleRequest = function(request, response) {
     if (parsedURL[1] === 'classes') {
       statusCode = 200;
       response.writeHead(statusCode, headers);
-      response.end(rooms[parsedURL[2]]);
+      response.end(rooms.hasOwnProperty(parsedURL[2]) ? rooms[parsedURL[2]] : '[]');
     } else {
       // handler for malformed URLs
       statusCode = 404;
