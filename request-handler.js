@@ -26,17 +26,22 @@ exports.handleRequest = function(request, response) {
 
   headers['Content-Type'] = "text/plain";
 
+  // handler for message requests
   if (request.method === 'GET') {
     if (parsedURL[1] === 'classes') {
       statusCode = 200;
       response.writeHead(statusCode, headers);
       response.end(rooms[parsedURL[2]]);
     } else {
+      // handler for malformed URLs
       statusCode = 404;
       response.writeHead(statusCode, headers);
       response.end("404: didn't find your page breh");
     }
-  } else if (request.method === 'POST') {
+  }
+
+  // handler for submitted messages
+  if (request.method === 'POST') {
     if (parsedURL[1] === 'classes') {
       // do something to write the message to the right room
       statusCode = 201;
