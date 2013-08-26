@@ -59,9 +59,9 @@ var sendMessageHandler = function(request, response, roomName) {
     message.message = parsedMessage.message;
     message.createdTime = Date();
     rooms[roomName].push(message);
+    response.writeHead(statusCode, headers);
+    response.end();
   });
-  response.writeHead(statusCode, headers);
-  response.end();
 };
 
 var notFoundHandler = function(request, response) {
