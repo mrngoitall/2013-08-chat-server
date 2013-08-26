@@ -33,6 +33,7 @@ exports.handleRequest = function(request, response) {
       response.end(rooms[parsedURL[2]]);
     } else {
       statusCode = 404;
+      response.writeHead(statusCode, headers);
       response.end("404: didn't find your page breh");
     }
   } else if (request.method === 'POST') {
