@@ -66,5 +66,6 @@ var sendMessageHandler = function(request, response, roomName) {
 
 var notFoundHandler = function(request, response) {
   statusCode = 404;
-
+  response.writeHead(statusCode, headers);
+  response.end("404 not found!");
 };
