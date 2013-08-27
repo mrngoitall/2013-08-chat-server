@@ -1,7 +1,29 @@
 $(document).ready(function() {
   var friends = {};
   var currentRoom = 'messages';
-  var chatRooms = {'messages': true};
+
+  var refreshRooms = function() {
+    $.ajax('http://hr-chat-server.nodejitsu.com/listrooms', {
+      contentType: 'application/json',
+      type: 'GET',
+      success: function(unparsedData){
+        var rooms = JSON.parse(unparsedData);
+        var chooseRoomOptions = '<option value="' + currentRoom+ '">' + currentRoom+ '</option>';
+        for(var j = 0; j < rooms.length; j++){
+          if (rooms[j] !== currentRoom) {
+            chooseRoomOptions += '<option value="' + rooms[j] + '">' + rooms[j] + '</option>';
+          }
+        }
+        chooseRoomOptions += '<option value="createRoom">Create a room</option>';
+        $('#chooseroom').html(chooseRoomOptions);
+      },
+      error: function(data) {
+        console.log('Could not refresh chat rooms');
+      }
+    });
+  };
+  refreshRooms();
+
   // Don't worry about this code, it will ensure that your ajax calls are allowed by the browser
 
   var refreshMessages = function() {
@@ -67,26 +89,15 @@ $(document).ready(function() {
   });
 
   $('#chooseroom').change(function(e) {
+    var newRoomName;
     if(this.value === 'createRoom'){
-      var newRoomName = prompt('What room did you want to join?') || 'messages';
-      if(chatRooms[newRoomName] === undefined){
-        chatRooms[newRoomName] = true;
-        var chooseRoomOptions = "";
-        for(var key in chatRooms){
-          if(key === newRoomName){
-            chooseRoomOptions += '<option value="' + key + '" selected>' + key + '</option>';
-          } else {
-            chooseRoomOptions += '<option value="' + key + '">' + key + '</option>';
-          }
-        }
-        chooseRoomOptions += '<option value="createRoom">Create a room</option>';
-        $('#chooseroom').html(chooseRoomOptions);
-      }
+      newRoomName = prompt('What room did you want to join?') || 'messages';
     }
     currentRoom = newRoomName || this.value;
     refreshMessages();
+    refreshRooms();
   });
 
-setInterval(refreshMessages,500);
+setInterval(refreshMessages,1000);
 
 });

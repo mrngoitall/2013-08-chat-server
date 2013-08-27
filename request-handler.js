@@ -69,7 +69,7 @@ exports.handleRequest = function(request, response) {
         response.writeHead(200,{ 'Content-Type': 'text/css' });
         response.end(data);
       });
-  }else if (request.url === '/index.html' || request.url === '/') {
+  } else if (request.url === '/index.html' || request.url === '/') {
     fs.readFile(__dirname + '/index.html',
       function (err, data) {
         if (err) {
@@ -84,6 +84,8 @@ exports.handleRequest = function(request, response) {
     sendMessageHandler(request, response, parsedURL[2]);
   } else if (request.method === 'GET' && parsedURL[1] === 'classes') {
     getMessagesHandler(request, response, parsedURL[2]);
+  } else if (request.method === 'GET' && parsedURL[1] === 'listrooms') {
+    getChatRoomsHandler(response);
   } else {
     notFoundHandler(request, response);
   }
@@ -98,6 +100,12 @@ var getMessagesHandler = function(request, response, roomName) {
   }
   response.writeHead(statusCode, headers);
   response.end(JSON.stringify(messages));
+};
+
+var getChatRoomsHandler = function(response) {
+  statusCode = 200;
+  response.writeHead(statusCode, headers);
+  response.end(JSON.stringify(Object.keys(rooms)));
 };
 
 var sendMessageHandler = function(request, response, roomName) {
