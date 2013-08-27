@@ -18,7 +18,11 @@ var headers = defaultCorsHeaders;
 headers['Content-Type'] = "text/plain";
 var statusCode;
 
-var rooms = {};
+if (fs.existsSync('messages.txt')) {
+  rooms = JSON.parse(fs.readFileSync('messages.txt'));
+} else {
+  rooms = {};
+}
 
 process.on('SIGINT', function() {
   console.log("Writing messages to disk...");
