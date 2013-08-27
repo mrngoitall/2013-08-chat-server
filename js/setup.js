@@ -6,7 +6,7 @@ $(document).ready(function() {
 
   var refreshMessages = function() {
 
-    $.ajax('http://127.0.0.1:8081/classes/'+currentRoom, {
+    $.ajax('http://hr-chat-server.nodejitsu.com/classes/'+currentRoom, {
       contentType: 'application/json',
       type: 'GET',
       success: function(unparsedData){
@@ -50,7 +50,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'POST',
       contentType: 'application/json',
-      url: 'http://127.0.0.1:8081/classes/'+currentRoom,
+      url: 'http://hr-chat-server.nodejitsu.com/classes/'+currentRoom,
       data: '{ "message": '+JSON.stringify($("#message").val())+', \
         "username":'+JSON.stringify($("#username").val())+' }'
     });
@@ -86,5 +86,7 @@ $(document).ready(function() {
     currentRoom = newRoomName || this.value;
     refreshMessages();
   });
+
+setInterval(refreshMessages,500);
 
 });

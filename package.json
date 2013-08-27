@@ -1,11 +1,11 @@
 {
-  "name": "2013-08-chat-server",
-  "subdomain": "adelikat-2013-08-chat-server",
   "scripts": {
-    "start": ""
+    "start": "node basic-server.js"
   },
-  "version": "0.0.0",
+  "version": "0.0.1-6",
   "engines": {
     "node": "0.10.x"
-  }
+  },
+  "name": "2013-08-chat-server",
+  "subdomain": "hr-chat-server"
 }

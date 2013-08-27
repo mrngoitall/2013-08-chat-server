@@ -24,12 +24,12 @@ if (fs.existsSync('messages.txt')) {
   rooms = {};
 }
 
-process.on('SIGINT', function() {
+setInterval(function () {
   console.log("Writing messages to disk...");
   fs.writeFileSync('messages.txt', JSON.stringify(rooms));
   console.log("Finished writing.");
   process.exit();
-});
+}, 60000);
 
 exports.handleRequest = function(request, response) {
   console.log("Serving request type " + request.method + " for url " + request.url);
