@@ -93,7 +93,7 @@ var getMessagesHandler = function(request, response, roomName) {
   statusCode = 200;
   var messages = [];
   var currentMessages = rooms[roomName] || [];
-  for (var i = 0; i < currentMessages.length; i++) {
+  for (var i = currentMessages.length-1; i >= 0; i--) {
     messages.push(currentMessages[i]);
   }
   response.writeHead(statusCode, headers);
